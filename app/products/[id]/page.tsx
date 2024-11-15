@@ -13,12 +13,12 @@ type Props = {
     params: { id: string }
 }
 
-const ProductDetails = async ({ params }: { params: { id: string }} ) => {
-  const product: Product = await getProductById(params.id);
+const ProductDetails = async ({ params: { id }}: Props ) => {
+  const product: Product = await getProductById(id);
 
   if(!product) redirect('/');
 
-  const similarProducts = await getSimilarProducts(params.id);
+  const similarProducts = await getSimilarProducts(id);
 
   return (
     <div className="product-container">
@@ -153,7 +153,7 @@ const ProductDetails = async ({ params }: { params: { id: string }} ) => {
                 </div>
             </div>
 
-            <Modal productId={params.id}/>
+            <Modal productId={id}/>
         </div>
       </div>
 
