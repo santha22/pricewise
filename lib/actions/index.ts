@@ -5,6 +5,8 @@ import Product from "../models/product.models";
 import { connectToDB } from "../mongoose";
 import { scrapeAmazonProduct } from "../scraper";
 import { getAveragePrice, getHighestPrice, getLowestPrice } from "../utils";
+import { User } from "@/types";
+import { generateEmailBody, sendEmail } from "../nodemailer";
 
 export async function scrapeAndStoreProduct(productUrl: string) {
     if(!productUrl) return;
@@ -68,6 +70,49 @@ export async function getAllProducts() {
 
         const products = await Product.find();
         return products;
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+
+export async function getSimilarProducts(productId: string) {
+    try {
+        connectToDB();
+
+        const currentProduct = await Product.find();
+
+        if(!currentProduct) return null;
+
+        const similarProducts = await Product.find({
+            _id: { $ne: productId },
+        }).limit(3);
+
+        return similarProducts;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export async function addUserEmailtoProduct(productId: string, userEmail: string) {
+    try {
+        const product = await Product.findById(productId);
+
+        if(!product) return;
+
+        console.log("product", product);
+        
+        const userExists = product.users.some((user: User) => user.email === userEmail);
+
+        if(!userExists) {
+            product.users.push({ email: userEmail});
+
+            await product.save();;
+            
+            const emailContent = await generateEmailBody(product, "WELCOME");
+            
+            await sendEmail(emailContent, [userEmail]);
+        }
     } catch (error) {
         console.log(error);
         
