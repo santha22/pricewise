@@ -1,14 +1,25 @@
-/** @type {import('next').NextConfig} */
+// /** @type {import('next').NextConfig} */
+// const nextConfig = {
+//   experimental: {
+//     serverActions: true,
+//     serverComponentsExternalPackages: ['mongoose']
+//   },
+//   images: {
+//     domains: ['m.media-amazon.com']
+//   }
+// }
 
+// module.exports = nextConfig
+
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
   experimental: {
-    serverActions: true,
-    serverComponentsExternalPackages: ['mongoose']
+    serverActions: {}
   },
+  serverExternalPackages: ['mongoose'], // moved from experimental
   images: {
-    domains:['m.media-amazon.com']
+    domains: ['m.media-amazon.com']
   }
-};
+}
 
 module.exports = nextConfig;
